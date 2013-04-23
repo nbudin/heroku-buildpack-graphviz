@@ -2,16 +2,19 @@
 # bin/compile <build-dir> <cache-dir>
 set -e
 
-PACKAGE="http://nbudin.s3.amazonaws.com/graphviz-2.28.0.tgz"
+GRAPHVIZ_VERSION="2.28.0"
+PACKAGE="http://nbudin.s3.amazonaws.com/graphviz-$GRAPHVIZ_VERSION.tgz"
 BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 BUILD_DIR=$1
 CACHE_DIR=$2
 GRAPHVIZ_DIR=$CACHE_DIR/.tools/graphviz
+TARBALL_DEST=$CACHE_DIR/graphviz-$GRAPHVIZ_VERSION.tgz
 
 mkdir -p $GRAPHVIZ_DIR
 
 echo "-----> Fetching and installing graphviz"
 cd $WGET_BUILD
-curl $PACKAGE -s -o - | tar xzf - -C $GRAPHVIZ_DIR
+curl $PACKAGE -s -o $TARBALL_DEST
+tar xzf $TARBALL_DEST -C $GRAPHVIZ_DIR
 
 exit 0
