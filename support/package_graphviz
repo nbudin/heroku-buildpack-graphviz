@@ -1,0 +1,45 @@
+#!/bin/sh
+
+set -e
+
+graphviz_version="$1"
+
+if [ "$graphviz_version" == "" ]; then
+  echo "usage: $0 VERSION"
+  exit 1
+fi
+
+if [ "$AWS_ID" == "" ]; then
+  echo "must set AWS_ID"
+  exit 1
+fi
+
+if [ "$AWS_SECRET" == "" ]; then
+  echo "must set AWS_SECRET"
+  exit 1
+fi
+
+if [ "$S3_BUCKET" == "" ]; then
+  echo "must set S3_BUCKET"
+  exit 1
+fi
+
+basedir="$( cd -P "$( dirname "$0" )" && pwd )"
+
+# make a temp directory
+tempdir="$( mktemp -t graphviz_XXXX )"
+rm -rf $tempdir
+mkdir -p $tempdir
+cd $tempdir
+
+# build and package graphviz for heroku
+vulcan build -v \
+  -n graphviz \
+  -c "cd graphviz-${graphviz_version} && ./configure --prefix=/app/.tools/graphviz && make install" \
+  -p /app/.tools/graphviz \
+  -s http://www.graphviz.org/pub/graphviz/stable/SOURCES/graphviz-${graphviz_version}.tar.gz \
+  -o $tempdir/graphviz-${graphviz_version}.tgz
+
+# upload graphviz to s3
+$basedir/aws/s3 put $S3_BUCKET \
+  graphviz-${graphviz_version}.tgz $tempdir/graphviz-${graphviz_version}.tgz
