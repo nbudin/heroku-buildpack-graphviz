@@ -8,7 +8,7 @@ PACKAGE="http://nbudin.s3.amazonaws.com/graphviz-$GRAPHVIZ_VERSION.tgz"
 BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 BUILD_DIR=$1
 CACHE_DIR=$2
-GRAPHVIZ_DIR=$CACHE_DIR/.tools/graphviz
+GRAPHVIZ_DIR=$BUILD_DIR/.tools/graphviz
 TARBALL_DEST=$CACHE_DIR/graphviz-$GRAPHVIZ_VERSION.tgz
 
 mkdir -p $GRAPHVIZ_DIR
